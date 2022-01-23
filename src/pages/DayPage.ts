@@ -2,8 +2,8 @@ import dayjs from 'dayjs';
 import i18n from 'i18n';
 import { Grid, GridCellCallbackParams } from '../components/Grid';
 import { Text } from '../components/Text';
-import { shared } from '../constants/common';
-import { AnchorDayTypes, anchorsKeys, MONTH_NAMES, PATHS, YEAR } from '../constants/config';
+import { MONTH_NAMES, shared } from '../constants/common';
+import { AnchorDayTypes, anchorsKeys, PATHS, YEAR } from '../constants/config';
 import { CONTENT_WIDTH, MARGINS, PAGE_HEIGHT, PAGE_WIDTH } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { getAnchorId } from '../domain/navigation';
@@ -234,6 +234,6 @@ export class DayPage extends Page {
 	}
 
 	drawScheduleLine(params: GridCellCallbackParams) {
-		const { x, y, height } = params;
+		// const { x, y, height } = params;
 	}
 }

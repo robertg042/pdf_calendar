@@ -49,3 +49,20 @@ export enum Months {
 	november = 'november',
 	december = 'december',
 }
+
+export const MONTH_COUNT = 12;
+
+export const MONTH_NAMES: MonthsType[] = [
+	'january',
+	'february',
+	'march',
+	'april',
+	'may',
+	'june',
+	'july',
+	'august',
+	'september',
+	'october',
+	'november',
+	'december',
+];

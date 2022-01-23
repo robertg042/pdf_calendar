@@ -1,6 +1,5 @@
 import path from 'path';
 import { Locales } from '../types/common';
-import { MonthsType } from './common';
 
 // Project structure
 const ROOT_DIR = process.cwd();
@@ -34,23 +33,6 @@ export const YEAR = 2022;
 export const LOCALE: Locales = 'en';
 
 export const COVER_IMAGE_PATH = path.join(PATHS.images, 'cover.jpg');
-
-export const MONTH_COUNT = 12;
-
-export const MONTH_NAMES: MonthsType[] = [
-	'january',
-	'february',
-	'march',
-	'april',
-	'may',
-	'june',
-	'july',
-	'august',
-	'september',
-	'october',
-	'november',
-	'december',
-];
 
 export type AnchorDayTypes =
 	| 'day1'

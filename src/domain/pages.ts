@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
-import { shared } from '../constants/common';
-import { MONTH_COUNT } from '../constants/config';
+import { MONTH_COUNT, shared } from '../constants/common';
 import { MARGINS, PAGE_WIDTH } from '../constants/page';
 import { ARROW_BACK, ARROW_FORWARD } from '../constants/shapes';
 import { DayPage } from '../pages/DayPage';

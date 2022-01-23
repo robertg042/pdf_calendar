@@ -1,14 +1,14 @@
 import i18n from 'i18n';
 import dayjs from 'dayjs';
-import { Days, FONTS, Months } from '../../constants/common';
-import { AnchorDayTypes, anchorsKeys, YEAR } from '../../constants/config';
-import { COLORS, FONT_SIZES } from '../../constants/theme';
-import { Text } from '../Text';
-import { getAnchorId } from '../../domain/navigation';
+import { Days, FONTS, Months, MonthsType } from '../constants/common';
+import { YEAR } from '../constants/config';
+import { COLORS, FONT_SIZES } from '../constants/theme';
+import { Text } from './Text';
+import { getAnchorId } from '../domain/navigation';
 
-export class MonthSection {
+export class CalendarMonthSection {
 	doc: PDFKit.PDFDocument;
-	name: Months;
+	name: MonthsType;
 	index: number;
 	x: number;
 	y: number;
@@ -17,7 +17,15 @@ export class MonthSection {
 	monthBarHeight: number;
 	dayBarHeight: number;
 
-	constructor(doc: PDFKit.PDFDocument, name: Months, index: number, x: number, y: number, width: number, height: number) {
+	constructor(
+		doc: PDFKit.PDFDocument,
+		name: MonthsType,
+		index: number,
+		x: number,
+		y: number,
+		width: number,
+		height: number
+	) {
 		this.doc = doc;
 		this.name = name;
 		this.index = index;

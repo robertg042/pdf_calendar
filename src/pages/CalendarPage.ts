@@ -1,7 +1,8 @@
 import i18n from 'i18n';
-import { MonthSection } from '../components/calendar/MonthSection';
+import { CalendarMonthSection } from '../components/CalendarMonthSection';
+import { Grid, GridCellCallbackParams } from '../components/Grid';
 import { Text } from '../components/Text';
-import { Months } from '../constants/common';
+import { MONTH_NAMES } from '../constants/common';
 import { anchorsKeys, YEAR } from '../constants/config';
 import { MARGINS, CONTENT_WIDTH, CONTENT_HEIGHT } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
@@ -70,27 +71,24 @@ export class CalendarPage extends Page {
 
 		const COLUMN_COUNT = 3;
 		const ROW_COUNT = 4;
-		const HORIZONTAL_GAP_COUNT = COLUMN_COUNT - 1;
-		const VERTICAL_GAP_COUNT = ROW_COUNT - 1;
-		const HORIZONTAL_GAP = 20;
+		const HORIZONTAL_GAP = 40;
 		const VERTICAL_GAP = 20;
 
 		const spaceAbove = this.headerLineY + this.headerBottomMargin;
 		const spaceBelow = this.bottomMargin;
 		const spaceSide = MARGINS.left;
+		const width = CONTENT_WIDTH;
+		const height = CONTENT_HEIGHT - spaceAbove - spaceBelow;
 
-		const width = (CONTENT_WIDTH - HORIZONTAL_GAP_COUNT * VERTICAL_GAP) / COLUMN_COUNT;
-		const height = (CONTENT_HEIGHT - VERTICAL_GAP_COUNT * HORIZONTAL_GAP - spaceAbove - spaceBelow) / ROW_COUNT;
-
-		Object.values(Months).forEach((monthName, monthIndex) => {
-			const columnIndex = monthIndex % COLUMN_COUNT;
-			const rowIndex = Math.floor(monthIndex / COLUMN_COUNT);
-
-			const x = spaceSide + columnIndex * (width + VERTICAL_GAP);
-			const y = spaceAbove + rowIndex * (height + HORIZONTAL_GAP);
-
-			const section = new MonthSection(this.doc, monthName, monthIndex, x, y, width, height);
+		const addMonthSection = ({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) => {
+			const monthName = MONTH_NAMES[cellIndex];
+			const section = new CalendarMonthSection(this.doc, monthName, cellIndex, x, y, cellWidth, cellHeight);
 			section.add();
+		};
+
+		Grid.add(spaceSide, spaceAbove, width, height, addMonthSection, ROW_COUNT, COLUMN_COUNT, {
+			horizontal: HORIZONTAL_GAP,
+			vertical: VERTICAL_GAP,
 		});
 
 		Text.reset();

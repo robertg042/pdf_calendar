@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import i18n from 'i18n';
 import { Text } from '../components/Text';
-import { shared } from '../constants/common';
-import { MONTH_NAMES, YEAR } from '../constants/config';
+import { MONTH_NAMES, shared } from '../constants/common';
+import { YEAR } from '../constants/config';
 import { CONTENT_WIDTH, MARGINS } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { getAnchorId } from '../domain/navigation';

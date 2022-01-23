@@ -1,7 +1,9 @@
 export interface GridCellCallbackParams {
 	x: number;
 	y: number;
-	height: number;
+	cellWidth: number;
+	cellHeight: number;
+	cellIndex: number;
 }
 
 class GridClass {
@@ -11,15 +13,29 @@ class GridClass {
 		this.doc = doc;
 	}
 
-	add(x: number, y: number, width: number, height: number, addPre: (params: GridCellCallbackParams) => void, rowCount = 1, columnCount = 1, gap: {horizontal: 0, vertical: 0}) {
+	add(
+		x: number,
+		y: number,
+		width: number,
+		height: number,
+		action: (params: GridCellCallbackParams) => void,
+		rowCount = 1,
+		columnCount = 1,
+		gap = { horizontal: 0, vertical: 0 }
+	) {
 		const horizontalGapCount = columnCount - 1;
 		const verticalGapCount = rowCount - 1;
+		const cellWidth = (width - horizontalGapCount * gap.horizontal) / columnCount;
+		const cellHeight = (height - verticalGapCount * gap.vertical) / rowCount;
 
-		const cellWidth = (width - horizontalGapCount * gap.vertical) / columnCount;
-		const cellHeight = (height - verticalGapCount * gap.horizontal) / rowCount;
-		// for (let i = 0; i < count; i++) {
-		// 	addPre(x, y, height);
-		// }
+		for (let cellIndex = 0, count = rowCount * columnCount; cellIndex < count; cellIndex++) {
+			const columnIndex = cellIndex % columnCount;
+			const rowIndex = Math.floor(cellIndex / columnCount);
+			const cellX = x + columnIndex * (cellWidth + gap.horizontal);
+			const cellY = y + rowIndex * (cellHeight + gap.vertical);
+
+			action({ x: cellX, y: cellY, cellWidth, cellHeight, cellIndex });
+		}
 	}
 }
 
