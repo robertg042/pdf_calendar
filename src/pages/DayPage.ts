@@ -3,8 +3,8 @@ import i18n from 'i18n';
 import { Grid, GridCellCallbackParams } from '../components/Grid';
 import { Text } from '../components/Text';
 import { MONTH_NAMES, shared } from '../constants/common';
-import { AnchorDayTypes, anchorsKeys, PATHS, YEAR } from '../constants/config';
-import { CONTENT_WIDTH, MARGINS, PAGE_HEIGHT, PAGE_WIDTH } from '../constants/page';
+import { YEAR } from '../constants/config';
+import { CONTENT_WIDTH, MARGINS, PAGE_HEIGHT } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { getAnchorId } from '../domain/navigation';
 import { DayPageType } from '../types/page';
@@ -17,7 +17,6 @@ export class DayPage extends Page {
 	outline: PDFKit.PDFOutline;
 	headerY: number;
 	section1Y: number;
-	section2Y: number;
 
 	constructor(doc: PDFKit.PDFDocument, date: dayjs.Dayjs, outline: PDFKit.PDFOutline, type: DayPageType) {
 		super(doc);
@@ -29,7 +28,9 @@ export class DayPage extends Page {
 
 		this.headerY = 0;
 		this.section1Y = 0;
-		this.section2Y = 0;
+
+		this.drawLine = this.drawLine.bind(this);
+		this.addHour = this.addHour.bind(this);
 	}
 
 	add() {
@@ -39,9 +40,8 @@ export class DayPage extends Page {
 		this.addLink();
 
 		const section1Header = i18n.__(`dayPage.${this.type}`);
-		const section1Callback = this.type === 'schedule' ? this.drawScheduleLine : this.drawScheduleLine;
 
-		this.addSection(MARGINS.left, this.section1Y, CONTENT_WIDTH, section1Header, section1Callback, 3);
+		this.addSection(MARGINS.left, this.section1Y, CONTENT_WIDTH, section1Header);
 
 		const dayIndex = this.date.date();
 		const monthIndex = this.date.month();
@@ -193,14 +193,7 @@ export class DayPage extends Page {
 		Text.reset();
 	}
 
-	private addSection(
-		x: number,
-		y: number,
-		width: number,
-		headerText: string,
-		addPre: (params: GridCellCallbackParams) => void,
-		count = 1
-	) {
+	private addSection(x: number, y: number, width: number, headerText: string) {
 		Text.reset();
 
 		const textPadding = 20;
@@ -208,11 +201,14 @@ export class DayPage extends Page {
 		const headerHeight = textHeight + 2 * textPadding;
 
 		this.doc.fillColor(COLORS.grayLight1).rect(x, y, width, headerHeight).fill();
+
 		Text.reset();
+
 		const { x: textX, y: textY } = Text.getCenteredPos(headerText, x, y, width, headerHeight);
 		this.doc.fillColor(COLORS.grayLight1).rect(x, y, width, headerHeight).fill();
 		this.doc.fillColor(COLORS.black).text(headerText, textX, textY);
 		const LINE_HEIGHT = 1;
+
 		// add lines
 		this.doc
 			.strokeColor(COLORS.black)
@@ -228,12 +224,63 @@ export class DayPage extends Page {
 			.moveTo(x, y + headerHeight)
 			.lineTo(x + width, y + headerHeight)
 			.stroke();
-		Text.reset();
 
-		// Grid.add(x, y + headerHeight, width, addPre, count);
+		const HEADER_CONTENT_GAP = 10;
+		this.addSectionLines(this.section1Y + headerHeight + HEADER_CONTENT_GAP);
+
+		Text.reset();
 	}
 
-	drawScheduleLine(params: GridCellCallbackParams) {
-		// const { x, y, height } = params;
+	addSectionLines(spaceAbove: number) {
+		Text.reset();
+
+		const spaceSide = MARGINS.left;
+		const spaceBelow = MARGINS.bottom;
+		const width = CONTENT_WIDTH;
+		const height = PAGE_HEIGHT - spaceAbove - spaceBelow;
+		const HOUR_COUNT = 24;
+		const COLUMN_COUNT = 1;
+		const ROW_COUNT = HOUR_COUNT;
+		const HORIZONTAL_GAP = 0;
+		const VERTICAL_GAP = 0;
+
+		Grid.add(spaceSide, spaceAbove, width, height, this.drawLine, ROW_COUNT, COLUMN_COUNT, {
+			horizontal: HORIZONTAL_GAP,
+			vertical: VERTICAL_GAP,
+		});
+
+		if (this.type === 'schedule') {
+			Text.reset();
+
+			Grid.add(spaceSide, spaceAbove, width, height, this.addHour, ROW_COUNT, COLUMN_COUNT, {
+				horizontal: HORIZONTAL_GAP,
+				vertical: VERTICAL_GAP,
+			});
+		}
+
+		Text.reset();
+	}
+
+	private drawLine({ x, y, cellWidth, cellHeight }: GridCellCallbackParams) {
+		const LINE_HEIGHT = 1;
+
+		this.doc
+			.strokeColor(COLORS.black)
+			.lineCap('round')
+			.lineWidth(LINE_HEIGHT)
+			.moveTo(x, y + cellHeight)
+			.lineTo(x + cellWidth, y + cellHeight)
+			.stroke();
+	}
+
+	private addHour({ x, y, cellHeight, cellIndex }: GridCellCallbackParams) {
+		const HOUR_LEFT_MARGIN = 10;
+
+		const text = `${cellIndex.toString().padStart(2, '0')}:00`;
+		this.doc.fillColor(COLORS.grayDark3).fontSize(FONT_SIZES.body);
+		const textWidth = this.doc.widthOfString(text);
+
+		const { x: textX, y: textY } = Text.getCenteredPos(text, x + HOUR_LEFT_MARGIN, y, textWidth, cellHeight);
+		this.doc.text(text, textX, textY);
 	}
 }

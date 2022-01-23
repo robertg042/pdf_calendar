@@ -2,7 +2,7 @@ import { Layout } from '../types/page';
 
 export const MARGINS = {
 	top: 40,
-	bottom: 80,
+	bottom: 120,
 	left: 50,
 	right: 50,
 };

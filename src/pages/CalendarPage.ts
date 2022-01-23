@@ -4,7 +4,7 @@ import { Grid, GridCellCallbackParams } from '../components/Grid';
 import { Text } from '../components/Text';
 import { MONTH_NAMES } from '../constants/common';
 import { anchorsKeys, YEAR } from '../constants/config';
-import { MARGINS, CONTENT_WIDTH, CONTENT_HEIGHT } from '../constants/page';
+import { MARGINS, CONTENT_WIDTH, PAGE_HEIGHT } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { getAnchorId } from '../domain/navigation';
 import { Page } from './Page';
@@ -20,6 +20,8 @@ export class CalendarPage extends Page {
 		this.doc = doc;
 		this.headerLineY = 0;
 		this.headerBottomMargin = 50;
+
+		this.addMonthSection = this.addMonthSection.bind(this);
 	}
 
 	add() {
@@ -76,19 +78,19 @@ export class CalendarPage extends Page {
 		const spaceBelow = MARGINS.bottom;
 		const spaceSide = MARGINS.left;
 		const width = CONTENT_WIDTH;
-		const height = CONTENT_HEIGHT - spaceAbove - spaceBelow;
+		const height = PAGE_HEIGHT - spaceAbove - spaceBelow;
 
-		const addMonthSection = ({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) => {
-			const monthName = MONTH_NAMES[cellIndex];
-			const section = new CalendarMonthSection(this.doc, monthName, cellIndex, x, y, cellWidth, cellHeight);
-			section.add();
-		};
-
-		Grid.add(spaceSide, spaceAbove, width, height, addMonthSection, ROW_COUNT, COLUMN_COUNT, {
+		Grid.add(spaceSide, spaceAbove, width, height, this.addMonthSection, ROW_COUNT, COLUMN_COUNT, {
 			horizontal: HORIZONTAL_GAP,
 			vertical: VERTICAL_GAP,
 		});
 
 		Text.reset();
+	}
+
+	private addMonthSection({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
+		const monthName = MONTH_NAMES[cellIndex];
+		const section = new CalendarMonthSection(this.doc, monthName, cellIndex, x, y, cellWidth, cellHeight);
+		section.add();
 	}
 }

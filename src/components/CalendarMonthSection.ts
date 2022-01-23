@@ -36,6 +36,9 @@ export class CalendarMonthSection {
 		this.height = height;
 		this.monthBarHeight = FONT_SIZES.calendar.monthName * 2;
 		this.dayBarHeight = FONT_SIZES.calendar.day * 2;
+
+		this.addGridLines = this.addGridLines.bind(this);
+		this.addGridDays = this.addGridDays.bind(this);
 	}
 
 	add() {
@@ -61,49 +64,22 @@ export class CalendarMonthSection {
 	private addGrid() {
 		Text.reset();
 
-		const monthIndex = this.index;
-		const days = Object.values(Days);
 		const DAYS_IN_WEEK = 7;
 		const ROW_COUNT = 6;
 		const COLUMN_COUNT = DAYS_IN_WEEK;
 		const barHeights = this.monthBarHeight + this.dayBarHeight;
-		const width = this.width / days.length;
-		const rowHeight = (this.height - barHeights) / ROW_COUNT;
 		const gridX = this.x;
 		const gridY = this.y + barHeights;
 		const gridWidth = this.width;
 		const gridHeight = this.height - barHeights;
 
 		// lines
-		const addGridLines = ({ x, y, cellWidth, cellHeight }: GridCellCallbackParams) => {
-			this.doc.strokeColor(COLORS.grayLight3);
-			this.doc.rect(x, y, cellWidth, cellHeight).stroke();
-		};
-
-		Grid.add(gridX, gridY, gridWidth, gridHeight, addGridLines, ROW_COUNT, COLUMN_COUNT);
+		Grid.add(gridX, gridY, gridWidth, gridHeight, this.addGridLines, ROW_COUNT, COLUMN_COUNT);
 
 		Text.reset();
 
 		// days
-		const date = dayjs(`${YEAR}-${Months[this.name].toUpperCase()}-01`, 'YYYY-MMMM-DD');
-		const dayCount = date.daysInMonth();
-		const startingDayOfWeek = date.isoWeekday();
-
-		const addGridDays = ({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) => {
-			const startingIndex = startingDayOfWeek - 1;
-			const endingIndex = startingIndex + dayCount;
-			if (cellIndex < startingIndex || cellIndex >= endingIndex) return;
-
-			const dayIndex = cellIndex - startingIndex + 1;
-			this.doc.fontSize(FONT_SIZES.calendar.day).fillColor(COLORS.grayDark2);
-			const { x: textX, y: textY } = Text.getCenteredPos(String(dayIndex), x, y, width, rowHeight, true);
-			this.doc.text(String(dayIndex), textX, textY);
-
-			const goToId = getAnchorId('day', monthIndex, dayIndex);
-			goToId && this.doc.goTo(x, y, cellWidth, cellHeight, goToId, {});
-		};
-
-		Grid.add(gridX, gridY, gridWidth, gridHeight, addGridDays, ROW_COUNT, COLUMN_COUNT);
+		Grid.add(gridX, gridY, gridWidth, gridHeight, this.addGridDays, ROW_COUNT, COLUMN_COUNT);
 
 		Text.reset();
 	}
@@ -133,5 +109,29 @@ export class CalendarMonthSection {
 		});
 
 		Text.reset();
+	}
+
+	private addGridLines({ x, y, cellWidth, cellHeight }: GridCellCallbackParams) {
+		this.doc.strokeColor(COLORS.grayLight3);
+		this.doc.rect(x, y, cellWidth, cellHeight).stroke();
+	}
+
+	private addGridDays({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
+		const monthIndex = this.index;
+		const date = dayjs(`${YEAR}-${Months[this.name].toUpperCase()}-01`, 'YYYY-MMMM-DD');
+		const dayCount = date.daysInMonth();
+		const startingDayOfWeek = date.isoWeekday();
+
+		const startingIndex = startingDayOfWeek - 1;
+		const endingIndex = startingIndex + dayCount;
+		if (cellIndex < startingIndex || cellIndex >= endingIndex) return;
+
+		const dayIndex = cellIndex - startingIndex + 1;
+		this.doc.fontSize(FONT_SIZES.calendar.day).fillColor(COLORS.grayDark2);
+		const { x: textX, y: textY } = Text.getCenteredPos(String(dayIndex), x, y, cellWidth, cellHeight, true);
+		this.doc.text(String(dayIndex), textX, textY);
+
+		const goToId = getAnchorId('day', monthIndex, dayIndex);
+		goToId && this.doc.goTo(x, y, cellWidth, cellHeight, goToId, {});
 	}
 }
