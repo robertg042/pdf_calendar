@@ -35,21 +35,6 @@ export type MonthsType =
 	| 'november'
 	| 'december';
 
-export enum Months {
-	january = 'january',
-	february = 'february',
-	march = 'march',
-	april = 'april',
-	may = 'may',
-	june = 'june',
-	july = 'july',
-	august = 'august',
-	september = 'september',
-	october = 'october',
-	november = 'november',
-	december = 'december',
-}
-
 export const MONTH_COUNT = 12;
 
 export const MONTH_NAMES: MonthsType[] = [
@@ -65,6 +50,16 @@ export const MONTH_NAMES: MonthsType[] = [
 	'october',
 	'november',
 	'december',
+];
+
+export const DAY_NAMES: Days[] = [
+	Days.monday,
+	Days.tuesday,
+	Days.wednesday,
+	Days.thursday,
+	Days.friday,
+	Days.saturday,
+	Days.sunday
 ];
 
 export const LINK_ARROW_Y_FACTOR = 12;

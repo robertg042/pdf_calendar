@@ -21,4 +21,8 @@ export const FONT_SIZES = {
 		monthName: 25,
 		day: 20,
 	},
+	monthPage: {
+		dayName: 28,
+		dayNumber: 25
+	}
 };

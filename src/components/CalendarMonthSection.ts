@@ -1,6 +1,6 @@
 import i18n from 'i18n';
 import dayjs from 'dayjs';
-import { Days, FONTS, Months, MonthsType } from '../constants/common';
+import { Days, FONTS, MonthsType, MONTH_NAMES } from '../constants/common';
 import { YEAR } from '../constants/config';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { Text } from './Text';
@@ -118,7 +118,7 @@ export class CalendarMonthSection {
 
 	private addGridDays({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
 		const monthIndex = this.index;
-		const date = dayjs(`${YEAR}-${Months[this.name].toUpperCase()}-01`, 'YYYY-MMMM-DD');
+		const date = dayjs(`${YEAR}-${MONTH_NAMES[monthIndex].toUpperCase()}-01`, 'YYYY-MMMM-DD');
 		const dayCount = date.daysInMonth();
 		const startingDayOfWeek = date.isoWeekday();
 
