@@ -5,6 +5,7 @@ import { YEAR } from '../constants/config';
 import { COLORS, FONT_SIZES } from '../constants/theme';
 import { Text } from './Text';
 import { getAnchorId } from '../domain/navigation';
+import { Grid, GridCellCallbackParams } from './Grid';
 
 export class CalendarMonthSection {
 	doc: PDFKit.PDFDocument;
@@ -45,6 +46,7 @@ export class CalendarMonthSection {
 
 	private addMonthBar() {
 		Text.reset();
+
 		const name = i18n.__(`months.full.${this.name}`);
 		this.doc.fontSize(FONT_SIZES.calendar.monthName).fillColor(COLORS.grayDark2);
 		const { x, y } = Text.getCenteredPos(name, this.x, this.y, this.width, this.monthBarHeight, true);
@@ -52,52 +54,56 @@ export class CalendarMonthSection {
 
 		const goToId = getAnchorId('month', this.index);
 		goToId && this.doc.goTo(this.x, this.y, this.width, this.monthBarHeight, goToId, {});
+
 		Text.reset();
 	}
 
 	private addGrid() {
 		Text.reset();
 
+		const monthIndex = this.index;
 		const days = Object.values(Days);
+		const DAYS_IN_WEEK = 7;
 		const ROW_COUNT = 6;
+		const COLUMN_COUNT = DAYS_IN_WEEK;
 		const barHeights = this.monthBarHeight + this.dayBarHeight;
 		const width = this.width / days.length;
 		const rowHeight = (this.height - barHeights) / ROW_COUNT;
+		const gridX = this.x;
+		const gridY = this.y + barHeights;
+		const gridWidth = this.width;
+		const gridHeight = this.height - barHeights;
 
 		// lines
-		for (let row = 0; row < ROW_COUNT; row++) {
-			const y = this.y + barHeights + row * rowHeight;
+		const addGridLines = ({ x, y, cellWidth, cellHeight }: GridCellCallbackParams) => {
+			this.doc.strokeColor(COLORS.grayLight3);
+			this.doc.rect(x, y, cellWidth, cellHeight).stroke();
+		};
 
-			days.forEach((_, index) => {
-				const x = this.x + index * width;
+		Grid.add(gridX, gridY, gridWidth, gridHeight, addGridLines, ROW_COUNT, COLUMN_COUNT);
 
-				this.doc.strokeColor(COLORS.grayLight3);
-				this.doc.rect(x, y, width, rowHeight).stroke();
-			});
-		}
+		Text.reset();
 
 		// days
 		const date = dayjs(`${YEAR}-${Months[this.name].toUpperCase()}-01`, 'YYYY-MMMM-DD');
 		const dayCount = date.daysInMonth();
 		const startingDayOfWeek = date.isoWeekday();
-		let dayOfWeek = startingDayOfWeek;
-		const DAYS_IN_WEEK = 7;
 
-		for (let dayIndex = 1; dayIndex <= dayCount; dayIndex++) {
-			const row = Math.floor((dayIndex - 1 + (startingDayOfWeek - 1)) / DAYS_IN_WEEK);
-			const boxX = this.x + (dayOfWeek - 1) * width;
-			const boxY = this.y + barHeights + row * rowHeight;
+		const addGridDays = ({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) => {
+			const startingIndex = startingDayOfWeek - 1;
+			const endingIndex = startingIndex + dayCount;
+			if (cellIndex < startingIndex || cellIndex >= endingIndex) return;
 
+			const dayIndex = cellIndex - startingIndex + 1;
 			this.doc.fontSize(FONT_SIZES.calendar.day).fillColor(COLORS.grayDark2);
-			const { x, y } = Text.getCenteredPos(String(dayIndex), boxX, boxY, width, rowHeight, true);
-			this.doc.text(String(dayIndex), x, y);
+			const { x: textX, y: textY } = Text.getCenteredPos(String(dayIndex), x, y, width, rowHeight, true);
+			this.doc.text(String(dayIndex), textX, textY);
 
-			const goToId = getAnchorId('day', this.index, dayIndex);
-			goToId && this.doc.goTo(boxX, boxY, width, rowHeight, goToId, {});
+			const goToId = getAnchorId('day', monthIndex, dayIndex);
+			goToId && this.doc.goTo(x, y, cellWidth, cellHeight, goToId, {});
+		};
 
-			dayOfWeek = (dayOfWeek + 1) % (DAYS_IN_WEEK + 1);
-			dayOfWeek = dayOfWeek === 0 ? 1 : dayOfWeek;
-		}
+		Grid.add(gridX, gridY, gridWidth, gridHeight, addGridDays, ROW_COUNT, COLUMN_COUNT);
 
 		Text.reset();
 	}
