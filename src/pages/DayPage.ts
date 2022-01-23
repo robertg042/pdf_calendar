@@ -39,7 +39,7 @@ export class DayPage extends Page {
 
 		this.addLink();
 
-		const section1Header = i18n.__(`dayPage.${this.type}`);
+		const section1Header = i18n.__(`pages.dayPage.${this.type}`);
 
 		this.addSection(MARGINS.left, this.section1Y, CONTENT_WIDTH, section1Header);
 
@@ -164,17 +164,20 @@ export class DayPage extends Page {
 
 		// add text
 		const textKey = this.type === 'schedule' ? 'notesLink' : 'scheduleLink';
-		const text = i18n.__(`dayPage.${textKey}`).toUpperCase();
+
+		const goToText = i18n.__(`pages.dayPage.goTo`).toUpperCase();
+		const text = i18n.__(`pages.dayPage.${textKey}`).toUpperCase();
+		const fullText = `${goToText} ${text}`;
 
 		this.doc.fillColor(COLORS.black).fontSize(FONT_SIZES.body);
-		const height = this.doc.heightOfString(text);
+		const height = this.doc.heightOfString(fullText);
 		const linkHeight = height + 2 * PADDING;
 		const section1TopPadding = 30;
 		this.section1Y = lineY + linkHeight + section1TopPadding;
 
-		const { x: textX, y: textY } = Text.getCenteredPos(text, lineX, lineY, width, linkHeight);
+		const { x: textX, y: textY } = Text.getCenteredPos(fullText, lineX, lineY, width, linkHeight);
 
-		this.doc.text(text, textX, textY);
+		this.doc.text(fullText, textX, textY);
 
 		// add line
 		this.doc
@@ -265,7 +268,7 @@ export class DayPage extends Page {
 		const LINE_HEIGHT = 1;
 
 		this.doc
-			.strokeColor(COLORS.black)
+			.strokeColor(COLORS.grayLight4)
 			.lineCap('round')
 			.lineWidth(LINE_HEIGHT)
 			.moveTo(x, y + cellHeight)

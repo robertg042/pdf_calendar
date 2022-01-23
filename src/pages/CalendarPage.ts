@@ -47,7 +47,7 @@ export class CalendarPage extends Page {
 
 		const { x: yearX, y: yearY } = Text.getCenteredPos(year, MARGINS.left, MARGINS.top, CONTENT_WIDTH, yearHeight);
 
-		this.doc.text(i18n.__(year), yearX, yearY);
+		this.doc.text(year, yearX, yearY);
 
 		// add line divider
 		const lineHeight = 3;

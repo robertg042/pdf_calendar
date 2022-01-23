@@ -1,2 +1,8 @@
+output.pdf
 node_modules/
-*.pdf
+.vscode/
+.idea/
+tags
+*.swp
+*.swo
+.DS_Store

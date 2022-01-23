@@ -19,6 +19,7 @@ export class CoverPage extends Page {
 		super.add();
 		this.addCoverImage();
 		this.addHeader();
+		this.addLink();
 
 		this.doc.outline.addItem(i18n.__(`bookmarks.${anchorsKeys.cover}`));
 
@@ -47,5 +48,10 @@ export class CoverPage extends Page {
 		const { x, y } = Text.getCenteredPos(year);
 		this.doc.text(year, x, y);
 		Text.reset();
+	}
+
+	addLink() {
+		const goToId = getAnchorId('calendar');
+		goToId && this.doc.goTo(0, 0, PAGE_WIDTH, PAGE_HEIGHT, goToId, {});
 	}
 }

@@ -1,6 +1,7 @@
 import { FONTS } from '../constants/common';
 import { MARGINS, CONTENT_WIDTH, CONTENT_HEIGHT } from '../constants/page';
 import { COLORS, FONT_SIZES } from '../constants/theme';
+
 class TextClass {
 	doc: PDFKit.PDFDocument;
 

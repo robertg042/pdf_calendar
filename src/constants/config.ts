@@ -5,9 +5,10 @@ import { Locales } from '../types/common';
 const ROOT_DIR = process.cwd();
 const ASSETS_PATH = path.join(ROOT_DIR, 'assets');
 const FONTS_PATH = path.join(ASSETS_PATH, 'fonts');
+const OUTPUT_FILENAME = 'output.pdf';
 
 export const PATHS = {
-	output: path.join(ROOT_DIR, 'file.pdf'),
+	output: path.join(ROOT_DIR, OUTPUT_FILENAME),
 	fonts: {
 		serif: {
 			regular: path.join(FONTS_PATH, 'NotoSerif', 'NotoSerif-Regular.ttf'),
@@ -31,54 +32,9 @@ export const SUPPORTED_LOCALES: Locales[] = ['en'];
 // Settings
 export const YEAR = 2022;
 export const LOCALE: Locales = 'en';
+export const DRAW_HELPER_LINES = false;
 
 export const COVER_IMAGE_PATH = path.join(PATHS.images, 'cover.jpg');
-
-export type AnchorDayTypes =
-	| 'day1'
-	| 'day2'
-	| 'day3'
-	| 'day4'
-	| 'day5'
-	| 'day6'
-	| 'day7'
-	| 'day8'
-	| 'day9'
-	| 'day10'
-	| 'day11'
-	| 'day12'
-	| 'day13'
-	| 'day14'
-	| 'day15'
-	| 'day16'
-	| 'day17'
-	| 'day18'
-	| 'day19'
-	| 'day20'
-	| 'day21'
-	| 'day22'
-	| 'day23'
-	| 'day24'
-	| 'day25'
-	| 'day26'
-	| 'day27'
-	| 'day28'
-	| 'day29'
-	| 'day30'
-	| 'day31';
-
-export type AnchorMonthTypes =
-	| 'month1'
-	| 'month2'
-	| 'month3'
-	| 'month4'
-	| 'month5'
-	| 'month6'
-	| 'month7'
-	| 'month8'
-	| 'month9'
-	| 'month10'
-	| 'month11';
 
 export const anchorsKeys = {
 	cover: 'cover',

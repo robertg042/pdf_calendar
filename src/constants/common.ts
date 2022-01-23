@@ -59,7 +59,7 @@ export const DAY_NAMES: Days[] = [
 	Days.thursday,
 	Days.friday,
 	Days.saturday,
-	Days.sunday
+	Days.sunday,
 ];
 
 export const LINK_ARROW_Y_FACTOR = 12;

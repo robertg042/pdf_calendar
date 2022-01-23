@@ -16,8 +16,10 @@ export class MonthPage extends Page {
 	headerY: number;
 	headerBottomMargin: number;
 	dayNameBarY: number;
+	monthCalendarBottomMargin: number;
 	monthCalendarY: number;
 	dayNameBarHeight: number;
+	notesHeaderHeight: number;
 
 	constructor(doc: PDFKit.PDFDocument, date: dayjs.Dayjs, outline: PDFKit.PDFOutline) {
 		super(doc);
@@ -29,19 +31,23 @@ export class MonthPage extends Page {
 		this.headerY = 0;
 		this.headerBottomMargin = 40;
 		this.dayNameBarY = 0;
+		this.monthCalendarBottomMargin = 40;
 		this.monthCalendarY = 0;
 
 		this.dayNameBarHeight = 50;
+		this.notesHeaderHeight = 50;
 
 		this.addDayNames = this.addDayNames.bind(this);
 		this.addDayGrid = this.addDayGrid.bind(this);
 		this.addDaysLabels = this.addDaysLabels.bind(this);
+		this.drawLine = this.drawLine.bind(this);
 	}
 
 	add() {
 		super.add();
 		this.addHeader();
 		this.addMonthCalendar();
+		this.addNotesSection();
 
 		const monthIndex = this.date.month();
 		const monthName = i18n.__(`months.full.${MONTH_NAMES[monthIndex]}`);
@@ -108,6 +114,8 @@ export class MonthPage extends Page {
 	}
 
 	private addMonthCalendar() {
+		Text.reset();
+
 		const DAYS_IN_WEEK = 7;
 		const COLUMN_COUNT = DAYS_IN_WEEK;
 		const DAY_NAME_BAR_ROW_COUNT = 1;
@@ -118,28 +126,13 @@ export class MonthPage extends Page {
 
 		this.dayNameBarY = this.headerY + this.headerBottomMargin + this.dayNameBarHeight;
 		const DAY_GRID_ROW_COUNT = this.getGridRowCount();
+		const DAY_GRID_HEIGHT = 0.6 * CONTENT_HEIGHT;
 
 		// add day numbers
-		Grid.add(
-			spaceSide,
-			this.dayNameBarY,
-			width,
-			0.6 * CONTENT_HEIGHT,
-			this.addDaysLabels,
-			DAY_GRID_ROW_COUNT,
-			COLUMN_COUNT
-		);
+		Grid.add(spaceSide, this.dayNameBarY, width, DAY_GRID_HEIGHT, this.addDaysLabels, DAY_GRID_ROW_COUNT, COLUMN_COUNT);
 
 		// add day grid
-		Grid.add(
-			spaceSide,
-			this.dayNameBarY,
-			width,
-			0.6 * CONTENT_HEIGHT,
-			this.addDayGrid,
-			DAY_GRID_ROW_COUNT,
-			COLUMN_COUNT
-		);
+		Grid.add(spaceSide, this.dayNameBarY, width, DAY_GRID_HEIGHT, this.addDayGrid, DAY_GRID_ROW_COUNT, COLUMN_COUNT);
 
 		// add day name bar
 		Grid.add(
@@ -159,6 +152,10 @@ export class MonthPage extends Page {
 			.moveTo(spaceSide, this.dayNameBarY)
 			.lineTo(spaceSide + width, this.dayNameBarY)
 			.stroke();
+
+		this.monthCalendarY = this.dayNameBarY + DAY_GRID_HEIGHT;
+
+		Text.reset();
 	}
 
 	private getGridRowCount() {
@@ -181,14 +178,14 @@ export class MonthPage extends Page {
 			.strokeColor(COLORS.black)
 			.lineCap('round')
 			.lineWidth(LINE_WIDTH)
-			.moveTo(x, y)
+			.moveTo(x, y + 0.75 * cellHeight)
 			.lineTo(x, y + cellHeight)
 			.stroke();
 		this.doc
 			.strokeColor(COLORS.black)
 			.lineCap('round')
 			.lineWidth(LINE_WIDTH)
-			.moveTo(x + cellWidth, y)
+			.moveTo(x + cellWidth, y + 0.75 * cellHeight)
 			.lineTo(x + cellWidth, y + cellHeight)
 			.stroke();
 
@@ -205,11 +202,17 @@ export class MonthPage extends Page {
 	}
 
 	private addDayGrid({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
+		Text.reset();
+
 		this.doc.strokeColor(COLORS.grayDark3);
 		this.doc.rect(x, y, cellWidth, cellHeight).stroke();
+
+		Text.reset();
 	}
 
 	private addDaysLabels({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
+		Text.reset();
+
 		const LABEL_SIZE = 50;
 		const monthIndex = this.date.month();
 		const date = dayjs(`${YEAR}-${MONTH_NAMES[monthIndex].toUpperCase()}-01`, 'YYYY-MMMM-DD');
@@ -232,5 +235,68 @@ export class MonthPage extends Page {
 
 		const goToId = getAnchorId('day', monthIndex, dayIndex);
 		goToId && this.doc.goTo(x, y, LABEL_SIZE, LABEL_SIZE, goToId, {});
+
+		Text.reset();
+	}
+
+	private addNotesSection() {
+		Text.reset();
+
+		const spaceAbove = this.monthCalendarY + this.monthCalendarBottomMargin;
+		const spaceSide = MARGINS.left;
+		const width = CONTENT_WIDTH;
+		const height = this.notesHeaderHeight;
+
+		// header
+		const headerText = i18n.__(`pages.monthPage.notes`);
+		this.doc.fontSize(FONT_SIZES.monthPage.dayNumber).fillColor(COLORS.grayDark2);
+		const { x: textX, y: textY } = Text.getCenteredPos(
+			headerText,
+			spaceSide,
+			spaceAbove,
+			width,
+			this.notesHeaderHeight,
+			true
+		);
+		this.doc.text(String(headerText), textX, textY);
+
+		this.doc
+			.strokeColor(COLORS.black)
+			.lineCap('round')
+			.lineWidth(3)
+			.moveTo(spaceSide, spaceAbove + height)
+			.lineTo(spaceSide + width, spaceAbove + height)
+			.stroke();
+
+		this.addSectionLines(spaceAbove + this.notesHeaderHeight);
+
+		Text.reset();
+	}
+
+	addSectionLines(spaceAbove: number) {
+		Text.reset();
+
+		const spaceSide = MARGINS.left;
+		const spaceBelow = MARGINS.bottom;
+		const width = CONTENT_WIDTH;
+		const height = PAGE_HEIGHT - spaceAbove - spaceBelow;
+		const COLUMN_COUNT = 1;
+		const ROW_COUNT = 7;
+
+		Grid.add(spaceSide, spaceAbove, width, height, this.drawLine, ROW_COUNT, COLUMN_COUNT);
+
+		Text.reset();
+	}
+
+	private drawLine({ x, y, cellWidth, cellHeight }: GridCellCallbackParams) {
+		const LINE_HEIGHT = 1;
+
+		this.doc
+			.strokeColor(COLORS.grayLight4)
+			.lineCap('round')
+			.lineWidth(LINE_HEIGHT)
+			.moveTo(x, y + cellHeight)
+			.lineTo(x + cellWidth, y + cellHeight)
+			.stroke();
 	}
 }

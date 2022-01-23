@@ -3,9 +3,11 @@ export const COLORS = {
 	grayDark1: '#222222',
 	grayDark2: '#444444',
 	grayDark3: '#666666',
+	grayDark4: '#888888',
 	grayLight1: '#efefef',
 	grayLight2: '#dfdfdf',
 	grayLight3: '#cfcfcf',
+	grayLight4: '#bfbfbf',
 	black: '#000000',
 };
 
@@ -23,6 +25,6 @@ export const FONT_SIZES = {
 	},
 	monthPage: {
 		dayName: 28,
-		dayNumber: 25
-	}
+		dayNumber: 25,
+	},
 };

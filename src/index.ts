@@ -9,7 +9,7 @@ import { CalendarPage } from './pages/CalendarPage';
 import { FONTS, MONTH_COUNT } from './constants/common';
 import { MARGINS, PAGE_HEIGHT, PAGE_WIDTH } from './constants/page';
 import { COLORS } from './constants/theme';
-import { YEAR } from './constants/config';
+import { DRAW_HELPER_LINES, YEAR } from './constants/config';
 import { addDayPage, addMonthPage } from './domain/pages';
 import { daysInYear } from './domain/date';
 
@@ -31,7 +31,7 @@ coverPage.add();
 
 const calendarPage = new CalendarPage(document.kit);
 calendarPage.add();
-drawHelperLines(document.kit);
+DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
 // add month pages
 let monthdate = dayjs(`${YEAR}-01-01`);
@@ -43,7 +43,7 @@ for (let month = 1; month <= MONTH_COUNT; month++) {
 	monthNextDate = dayjs(monthdate.add(1, 'month'));
 
 	addMonthPage(document, monthsOutline, monthdate, monthPreviousDate, monthNextDate, month);
-	drawHelperLines(document.kit);
+	DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
 	monthPreviousDate = dayjs(monthdate);
 	monthdate = monthNextDate;
@@ -60,10 +60,10 @@ for (let day = 1; day <= daysInYear; day++) {
 	dayNextDate = dayjs(daydate.add(1, 'day'));
 
 	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'schedule');
-	drawHelperLines(document.kit);
+	DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
 	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'notes');
-	drawHelperLines(document.kit);
+	DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
 	dayPreviousDate = dayjs(daydate);
 	daydate = dayNextDate;
