@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { MONTH_COUNT, shared } from '../constants/common';
+import { LINK_ARROW_Y_FACTOR, MONTH_COUNT, shared } from '../constants/common';
 import { MARGINS, PAGE_WIDTH } from '../constants/page';
 import { ARROW_BACK, ARROW_FORWARD } from '../constants/shapes';
 import { DayPage } from '../pages/DayPage';
@@ -23,7 +23,13 @@ export const addDayPage = (
 
 	if (index !== 1) {
 		// add link to previous day
-		document.kit.save().translate(70, 35).scale(0.1).path(ARROW_BACK).fillAndStroke().restore();
+		document.kit
+			.save()
+			.translate(70, MARGINS.top + LINK_ARROW_Y_FACTOR)
+			.scale(0.1)
+			.path(ARROW_BACK)
+			.fillAndStroke()
+			.restore();
 
 		if (previousDate) {
 			const dayIndex = previousDate.date();
@@ -43,7 +49,7 @@ export const addDayPage = (
 		// add link to next day
 		document.kit
 			.save()
-			.translate(PAGE_WIDTH - 100, 35)
+			.translate(PAGE_WIDTH - 100, MARGINS.top + LINK_ARROW_Y_FACTOR)
 			.scale(0.1)
 			.path(ARROW_FORWARD)
 			.fillAndStroke()
@@ -77,7 +83,13 @@ export const addMonthPage = (
 
 	if (index !== 1) {
 		// add link to previous month
-		document.kit.save().translate(70, 35).scale(0.1).path(ARROW_BACK).fillAndStroke().restore();
+		document.kit
+			.save()
+			.translate(70, MARGINS.top + LINK_ARROW_Y_FACTOR)
+			.scale(0.1)
+			.path(ARROW_BACK)
+			.fillAndStroke()
+			.restore();
 
 		if (previousDate) {
 			const monthIndex = previousDate.month();
@@ -94,7 +106,7 @@ export const addMonthPage = (
 		// add link to next month
 		document.kit
 			.save()
-			.translate(PAGE_WIDTH - 100, 35)
+			.translate(PAGE_WIDTH - 100, MARGINS.top + LINK_ARROW_Y_FACTOR)
 			.scale(0.1)
 			.path(ARROW_FORWARD)
 			.fillAndStroke()

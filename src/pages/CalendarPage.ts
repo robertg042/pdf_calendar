@@ -13,7 +13,6 @@ export class CalendarPage extends Page {
 	doc: PDFKit.PDFDocument;
 	headerLineY: number;
 	headerBottomMargin: number;
-	bottomMargin: number;
 
 	constructor(doc: PDFKit.PDFDocument) {
 		super(doc);
@@ -21,7 +20,6 @@ export class CalendarPage extends Page {
 		this.doc = doc;
 		this.headerLineY = 0;
 		this.headerBottomMargin = 50;
-		this.bottomMargin = MARGINS.bottom * 6;
 	}
 
 	add() {
@@ -75,7 +73,7 @@ export class CalendarPage extends Page {
 		const VERTICAL_GAP = 20;
 
 		const spaceAbove = this.headerLineY + this.headerBottomMargin;
-		const spaceBelow = this.bottomMargin;
+		const spaceBelow = MARGINS.bottom;
 		const spaceSide = MARGINS.left;
 		const width = CONTENT_WIDTH;
 		const height = CONTENT_HEIGHT - spaceAbove - spaceBelow;

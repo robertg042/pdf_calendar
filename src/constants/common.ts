@@ -66,3 +66,5 @@ export const MONTH_NAMES: MonthsType[] = [
 	'november',
 	'december',
 ];
+
+export const LINK_ARROW_Y_FACTOR = 12;
