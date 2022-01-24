@@ -1,6 +1,6 @@
 {
 	"name": "pdf_calendar",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Pdf calendar organizer generator",
 	"main": "src/index.ts",
 	"scripts": {
