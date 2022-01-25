@@ -1,4 +1,22 @@
+import { DayPageType } from "./page";
+
 export type Locales = 'en';
+
+export interface ObjectLiteral {
+  [key: string]: any;
+}
+
+export type DayPageTypeKeyObject = {
+  [key in DayPageType]: MonthsAnchorKeyObject;
+}
+
+export type MonthsAnchorKeyObject = {
+  [key in AnchorMonthTypes]: DaysAnchorKeyObject;
+}
+
+export type DaysAnchorKeyObject = {
+  [key in AnchorDayTypes]: string;
+}
 
 export type AnchorDayTypes =
 	| 'day1'
@@ -34,6 +52,7 @@ export type AnchorDayTypes =
 	| 'day31';
 
 export type AnchorMonthTypes =
+	| 'month0'
 	| 'month1'
 	| 'month2'
 	| 'month3'
