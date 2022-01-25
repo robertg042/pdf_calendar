@@ -59,10 +59,16 @@ const daysOutline = document.kit.outline.addItem('Days', { expanded: true });
 for (let day = 1; day <= daysInYear; day++) {
 	dayNextDate = dayjs(daydate.add(1, 'day'));
 
-	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'schedule');
+	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'notes1');
 	DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
-	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'notes');
+	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'notes2');
+	DRAW_HELPER_LINES && drawHelperLines(document.kit);
+
+	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'notes3');
+	DRAW_HELPER_LINES && drawHelperLines(document.kit);
+
+	addDayPage(document, daysOutline, daydate, dayPreviousDate, dayNextDate, day, 'schedule');
 	DRAW_HELPER_LINES && drawHelperLines(document.kit);
 
 	dayPreviousDate = dayjs(daydate);

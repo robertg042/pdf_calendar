@@ -4,9 +4,11 @@ import { Grid, GridCellCallbackParams } from '../components/Grid';
 import { Text } from '../components/Text';
 import { MONTH_NAMES, shared } from '../constants/common';
 import { YEAR } from '../constants/config';
-import { CONTENT_WIDTH, MARGINS, PAGE_HEIGHT } from '../constants/page';
+import { CONTENT_WIDTH, MARGINS, PAGE_HEIGHT, PAGE_WIDTH } from '../constants/page';
+import { ARROW_BACK, ARROW_FORWARD } from '../constants/shapes';
 import { COLORS, FONT_SIZES } from '../constants/theme';
-import { getAnchorId } from '../domain/navigation';
+import { AnchorIdType, getAnchorId } from '../domain/navigation';
+import { hasNotesBackLink, hasNotesForwardLink, isNotesType } from '../domain/pages';
 import { DayPageType } from '../types/page';
 import { Page } from './Page';
 
@@ -17,6 +19,7 @@ export class DayPage extends Page {
 	outline: PDFKit.PDFOutline;
 	headerY: number;
 	section1Y: number;
+	DEFAULT_PAGE_TYPE: DayPageType;
 
 	constructor(doc: PDFKit.PDFDocument, date: dayjs.Dayjs, outline: PDFKit.PDFOutline, type: DayPageType) {
 		super(doc);
@@ -26,6 +29,7 @@ export class DayPage extends Page {
 		this.outline = outline;
 		this.type = type;
 
+		this.DEFAULT_PAGE_TYPE = 'notes1';
 		this.headerY = 0;
 		this.section1Y = 0;
 
@@ -52,11 +56,17 @@ export class DayPage extends Page {
 		}
 
 		let anchorId = getAnchorId('day', monthIndex, dayIndex);
-		if (this.type === 'schedule') {
+		if (this.type === this.DEFAULT_PAGE_TYPE) {
 			anchorId && super.addAnchor(anchorId);
+		}
+		if (this.type === 'schedule') {
 			anchorId = getAnchorId('daySchedule', monthIndex, dayIndex);
-		} else if (this.type === 'notes') {
-			anchorId = getAnchorId('dayNotes', monthIndex, dayIndex);
+		} else if (this.type === 'notes1') {
+			anchorId = getAnchorId('dayNotes1', monthIndex, dayIndex);
+		} else if (this.type === 'notes2') {
+			anchorId = getAnchorId('dayNotes2', monthIndex, dayIndex);
+		} else if (this.type === 'notes3') {
+			anchorId = getAnchorId('dayNotes3', monthIndex, dayIndex);
 		}
 		anchorId && super.addAnchor(anchorId);
 
@@ -189,8 +199,13 @@ export class DayPage extends Page {
 			.stroke();
 
 		// add link
-		const goToIdType = this.type === 'schedule' ? 'dayNotes' : 'daySchedule';
-		const goToId = getAnchorId(goToIdType, monthIndex, dayIndex);
+		let goToIdType: AnchorIdType = 'daySchedule';
+		if (isNotesType(this.type)) {
+			goToIdType = 'daySchedule';
+		} else if (this.type === 'schedule') {
+			goToIdType = 'dayNotes1';
+		}
+		const goToId = goToIdType && getAnchorId(goToIdType, monthIndex, dayIndex);
 		goToId && this.doc.goTo(lineX, lineY, width, linkHeight, goToId);
 
 		Text.reset();
@@ -232,6 +247,10 @@ export class DayPage extends Page {
 		this.addSectionLines(this.section1Y + headerHeight + HEADER_CONTENT_GAP);
 
 		Text.reset();
+
+		this.addNotesPageLink(x, this.section1Y, width, headerHeight);
+
+		Text.reset();
 	}
 
 	addSectionLines(spaceAbove: number) {
@@ -243,7 +262,7 @@ export class DayPage extends Page {
 		const height = PAGE_HEIGHT - spaceAbove - spaceBelow;
 		const HOUR_COUNT = 24;
 		const COLUMN_COUNT = 1;
-		const ROW_COUNT = HOUR_COUNT;
+		const ROW_COUNT = this.type === 'schedule' ? HOUR_COUNT : 20;
 		const HORIZONTAL_GAP = 0;
 		const VERTICAL_GAP = 0;
 
@@ -285,5 +304,40 @@ export class DayPage extends Page {
 
 		const { x: textX, y: textY } = Text.getCenteredPos(text, x + HOUR_LEFT_MARGIN, y, textWidth, cellHeight);
 		this.doc.text(text, textX, textY);
+	}
+
+	private addNotesPageLink(x: number, y: number, width: number, height: number) {
+		const LINK_WIDTH = 70;
+
+		const dayIndex = this.date.date();
+		const monthIndex = this.date.month();
+		const backGoToIdType: AnchorIdType = this.type === 'notes2' ? 'dayNotes1' : 'dayNotes2';
+		const forwardGoToIdType: AnchorIdType = this.type === 'notes1' ? 'dayNotes2' : 'dayNotes3';
+		const backGoToId = backGoToIdType && getAnchorId(backGoToIdType, monthIndex, dayIndex);
+		const forwardGoToId = forwardGoToIdType && getAnchorId(forwardGoToIdType, monthIndex, dayIndex);
+
+		const backLinkX = x;
+		const forwardLinkX = x + width - LINK_WIDTH;
+
+		if (hasNotesBackLink(this.type)) {
+			this.doc
+				.save()
+				.translate(70, y + 0.25 * height)
+				.scale(0.07)
+				.path(ARROW_BACK)
+				.fillAndStroke()
+				.restore();
+			backGoToId && this.doc.goTo(backLinkX, y, LINK_WIDTH, height, backGoToId);
+		}
+		if (hasNotesForwardLink(this.type)) {
+			this.doc
+				.save()
+				.translate(PAGE_WIDTH - 100, y + 0.25 * height)
+				.scale(0.07)
+				.path(ARROW_FORWARD)
+				.fillAndStroke()
+				.restore();
+			forwardGoToId && this.doc.goTo(forwardLinkX, y, LINK_WIDTH, height, forwardGoToId);
+		}
 	}
 }

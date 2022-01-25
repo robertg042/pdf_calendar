@@ -8,7 +8,9 @@
 			"scheduleLink": "schedule",
 			"notesLink": "notes",
 			"schedule": "Schedule",
-			"notes": "Notes"
+			"notes1": "Notes 1",
+			"notes2": "Notes 2",
+			"notes3": "Notes 3"
 		},
 		"monthPage": {
 			"notes": "Notes"

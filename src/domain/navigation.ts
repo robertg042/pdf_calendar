@@ -1,7 +1,15 @@
 import { anchorsKeys } from '../constants/config';
 import { AnchorDayTypes, AnchorMonthTypes } from '../types/common';
 
-type AnchorIdType = 'cover' | 'calendar' | 'month' | 'day' | 'daySchedule' | 'dayNotes';
+export type AnchorIdType =
+	| 'cover'
+	| 'calendar'
+	| 'month'
+	| 'day'
+	| 'daySchedule'
+	| 'dayNotes1'
+	| 'dayNotes2'
+	| 'dayNotes3';
 
 export const replaceDigitsWithWords = (str: string) => {
 	let replaced = str.replace(/0/g, 'zero');
@@ -16,7 +24,7 @@ export const replaceDigitsWithWords = (str: string) => {
 	replaced = replaced.replace(/9/g, 'nine');
 
 	return replaced;
-}
+};
 
 export const getAnchorId = (type: AnchorIdType, monthIndex?: number, dayIndex?: number) => {
 	if (type === 'cover') {
@@ -33,8 +41,16 @@ export const getAnchorId = (type: AnchorIdType, monthIndex?: number, dayIndex?: 
 		return anchorsKeys.day.schedule[`month${String(monthIndex)}` as AnchorMonthTypes][
 			`day${String(dayIndex)}` as AnchorDayTypes
 		];
-	} else if (type === 'dayNotes') {
-		return anchorsKeys.day.notes[`month${String(monthIndex)}` as AnchorMonthTypes][
+	} else if (type === 'dayNotes1') {
+		return anchorsKeys.day.notes1[`month${String(monthIndex)}` as AnchorMonthTypes][
+			`day${String(dayIndex)}` as AnchorDayTypes
+		];
+	} else if (type === 'dayNotes2') {
+		return anchorsKeys.day.notes2[`month${String(monthIndex)}` as AnchorMonthTypes][
+			`day${String(dayIndex)}` as AnchorDayTypes
+		];
+	} else if (type === 'dayNotes3') {
+		return anchorsKeys.day.notes3[`month${String(monthIndex)}` as AnchorMonthTypes][
 			`day${String(dayIndex)}` as AnchorDayTypes
 		];
 	}

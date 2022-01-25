@@ -7,7 +7,7 @@ import { Document } from '../pages/Document';
 import { MonthPage } from '../pages/MonthPage';
 import { DayPageType } from '../types/page';
 import { daysInYear } from './date';
-import { getAnchorId } from './navigation';
+import { AnchorIdType, getAnchorId } from './navigation';
 
 export const addDayPage = (
 	document: Document,
@@ -39,8 +39,12 @@ export const addDayPage = (
 			const height = shared.dayPageHeaderHeight || 80;
 			const x = MARGINS.left;
 			const y = MARGINS.top;
-			const goToIdType = type === 'schedule' ? 'daySchedule' : 'dayNotes';
-			const goToId = getAnchorId(goToIdType, monthIndex, dayIndex);
+
+			let goToIdType: AnchorIdType = 'daySchedule';
+			if (isNotesType(type)) {
+				goToIdType = 'dayNotes1';
+			}
+			const goToId = goToIdType && getAnchorId(goToIdType, monthIndex, dayIndex);
 			goToId && document.kit.goTo(x, y, width, height, goToId, {});
 		}
 	}
@@ -63,8 +67,12 @@ export const addDayPage = (
 			const height = shared.dayPageHeaderHeight || 80;
 			const x = PAGE_WIDTH - MARGINS.right - width;
 			const y = MARGINS.top;
-			const goToIdType = type === 'schedule' ? 'daySchedule' : 'dayNotes';
-			const goToId = getAnchorId(goToIdType, monthIndex, dayIndex);
+
+			let goToIdType: AnchorIdType = 'daySchedule';
+			if (isNotesType(type)) {
+				goToIdType = 'dayNotes1';
+			}
+			const goToId = goToIdType && getAnchorId(goToIdType, monthIndex, dayIndex);
 			goToId && document.kit.goTo(x, y, width, height, goToId, {});
 		}
 	}
@@ -123,4 +131,16 @@ export const addMonthPage = (
 			goToId && document.kit.goTo(x, y, width, height, goToId, {});
 		}
 	}
+};
+
+export const isNotesType = (type: DayPageType) => {
+	return ['notes1', 'notes2', 'notes3'].includes(type);
+};
+
+export const hasNotesBackLink = (type: DayPageType) => {
+	return ['notes2', 'notes3'].includes(type);
+};
+
+export const hasNotesForwardLink = (type: DayPageType) => {
+	return ['notes1', 'notes2'].includes(type);
 };
