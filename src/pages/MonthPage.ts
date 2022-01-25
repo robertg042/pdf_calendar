@@ -20,6 +20,9 @@ export class MonthPage extends Page {
 	monthCalendarY: number;
 	dayNameBarHeight: number;
 	notesHeaderHeight: number;
+	labelSize: number;
+	healthBarHeight: number;
+	healthBarCellCount: number;
 
 	constructor(doc: PDFKit.PDFDocument, date: dayjs.Dayjs, outline: PDFKit.PDFOutline) {
 		super(doc);
@@ -36,11 +39,15 @@ export class MonthPage extends Page {
 
 		this.dayNameBarHeight = 50;
 		this.notesHeaderHeight = 50;
+		this.labelSize = 50;
+		this.healthBarHeight = 20;
+		this.healthBarCellCount = 5;
 
 		this.addDayNames = this.addDayNames.bind(this);
 		this.addDayGrid = this.addDayGrid.bind(this);
 		this.addDaysLabels = this.addDaysLabels.bind(this);
 		this.drawLine = this.drawLine.bind(this);
+		this.healthBar = this.healthBar.bind(this);
 	}
 
 	add() {
@@ -213,7 +220,6 @@ export class MonthPage extends Page {
 	private addDaysLabels({ x, y, cellWidth, cellHeight, cellIndex }: GridCellCallbackParams) {
 		Text.reset();
 
-		const LABEL_SIZE = 50;
 		const monthIndex = this.date.month();
 		const date = dayjs(`${YEAR}-${MONTH_NAMES[monthIndex].toUpperCase()}-01`, 'YYYY-MMMM-DD');
 		const dayCount = date.daysInMonth();
@@ -223,18 +229,39 @@ export class MonthPage extends Page {
 		const endingIndex = startingIndex + dayCount;
 		if (cellIndex < startingIndex || cellIndex >= endingIndex) return;
 
+		// add day health bars
+		Grid.add(x + this.labelSize, y, cellWidth - this.labelSize, this.healthBarHeight, this.healthBar, 1, this.healthBarCellCount);
+
 		// label rect
 		this.doc.strokeColor(COLORS.grayLight3).lineWidth(1);
-		this.doc.rect(x, y, LABEL_SIZE, LABEL_SIZE).stroke();
+		this.doc.rect(x, y, this.labelSize, this.labelSize).stroke();
 
 		// label text
 		const dayIndex = cellIndex - startingIndex + 1;
 		this.doc.fontSize(FONT_SIZES.monthPage.dayNumber).fillColor(COLORS.grayDark2);
-		const { x: textX, y: textY } = Text.getCenteredPos(String(dayIndex), x, y, LABEL_SIZE, LABEL_SIZE, true);
+		const { x: textX, y: textY } = Text.getCenteredPos(String(dayIndex), x, y, this.labelSize, this.labelSize, true);
 		this.doc.text(String(dayIndex), textX, textY);
 
 		const goToId = getAnchorId('day', monthIndex, dayIndex);
-		goToId && this.doc.goTo(x, y, LABEL_SIZE, LABEL_SIZE, goToId, {});
+		goToId && this.doc.goTo(x, y, this.labelSize, this.labelSize, goToId, {});
+
+		Text.reset();
+	}
+
+	private healthBar({ x, y, cellWidth, cellHeight, cellIndex, cellCount }: GridCellCallbackParams) {
+		Text.reset();
+
+		this.doc.strokeColor(COLORS.grayDark3).lineWidth(1);
+		this.doc.rect(x, y, cellWidth, cellHeight).stroke();
+
+		if (cellIndex > 0) {
+
+			this.doc
+				.strokeColor(COLORS.grayLight3)
+				.moveTo(x, y)
+				.lineTo(x, y + cellHeight)
+				.stroke();
+		}
 
 		Text.reset();
 	}
@@ -292,7 +319,7 @@ export class MonthPage extends Page {
 		const LINE_HEIGHT = 1;
 
 		this.doc
-			.strokeColor(COLORS.grayLight4)
+			.strokeColor(COLORS.grayDark3)
 			.lineCap('round')
 			.lineWidth(LINE_HEIGHT)
 			.moveTo(x, y + cellHeight)

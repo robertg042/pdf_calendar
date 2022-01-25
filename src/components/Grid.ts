@@ -4,6 +4,7 @@ export interface GridCellCallbackParams {
 	cellWidth: number;
 	cellHeight: number;
 	cellIndex: number;
+	cellCount: number;
 }
 
 class GridClass {
@@ -28,13 +29,13 @@ class GridClass {
 		const cellWidth = (width - horizontalGapCount * gap.horizontal) / columnCount;
 		const cellHeight = (height - verticalGapCount * gap.vertical) / rowCount;
 
-		for (let cellIndex = 0, count = rowCount * columnCount; cellIndex < count; cellIndex++) {
+		for (let cellIndex = 0, cellCount = rowCount * columnCount; cellIndex < cellCount; cellIndex++) {
 			const columnIndex = cellIndex % columnCount;
 			const rowIndex = Math.floor(cellIndex / columnCount);
 			const cellX = x + columnIndex * (cellWidth + gap.horizontal);
 			const cellY = y + rowIndex * (cellHeight + gap.vertical);
 
-			action({ x: cellX, y: cellY, cellWidth, cellHeight, cellIndex });
+			action({ x: cellX, y: cellY, cellWidth, cellHeight, cellIndex, cellCount });
 		}
 	}
 }
