@@ -1,4 +1,5 @@
 output.pdf
+build/
 node_modules/
 .vscode/
 .idea/
