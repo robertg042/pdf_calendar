@@ -38,7 +38,7 @@ export const SUPPORTED_LOCALES: Locales[] = ['en'];
 // === Project structure
 
 // Settings
-export const YEAR = 2022;
+export const YEAR = 2023;
 export const LOCALE: Locales = 'en';
 export const DRAW_HELPER_LINES = false;
 
